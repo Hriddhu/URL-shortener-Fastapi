@@ -1,0 +1,13 @@
+[project]
+name = "url-shortener-fastapi"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "alembic>=1.18.4",
+    "dotenv>=0.9.9",
+    "fastapi>=0.136.1",
+    "sqlalchemy>=2.0.49",
+    "uvicorn>=0.47.0",
+]
