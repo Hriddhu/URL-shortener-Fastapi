@@ -4,6 +4,9 @@ from sqlalchemy.orm import Session
 from database import SessionLocal
 from models import User
 from services.auth import decode_token
+from repositories.base import IUserRepository, IURLRepository
+from repositories.user_repository import SQLAlchemyUserRepository
+from repositories.url_repository import SQLAlchemyURLRepository
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 

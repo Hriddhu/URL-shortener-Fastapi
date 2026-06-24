@@ -8,25 +8,32 @@ from repositories.base import IURLRepository
 class SQLAlchemyURLRepository(IURLRepository):
 
     def __init__(self, db: Session):
-        # same idea as user repository — store db as self.db
-        ...
+        self.db = db
 
     def get_by_slug(self, slug: str) -> Optional[URL]:
-        # hint: db.query(URL).filter(URL.slug == slug).first()
-        ...
+        return self.db.query(URL).filter(URL.slug == slug).first()
 
     def create(self, long_url: str, user_id: Optional[int], expires_at: Optional[datetime]) -> URL:
-        # hint: these lines currently live in services/url.py inside create()
-        # URL(...), db.add, db.commit, db.refresh, return url_obj
-        # do NOT set slug here — it will be None after this call, that's fine
-        ...
+        
+        url_obj = URL(long_url=long_url, user_id=user_id, expires_at=expires_at)
+        self.db.add(url_obj)
+        self.db.commit()
+        self.db.refresh(url_obj)
+    
+        return url_obj
 
-    def set_slug(self, url: URL, slug: str) -> URL:
-        # hint: url.slug = slug, db.commit, db.refresh, return url
-        # this handles the second commit currently in services/url.py
-        ...
+    def set_slug(self, url_obj: URL, slug: str) -> URL:
+        url_obj.slug= slug
+        self.db.commit()
+        self.db.refresh(url_obj)
+        return url_obj
+        
 
-    def increment_clicks(self, url: URL) -> URL:
-        # hint: read url.clicks, handle None, add 1, db.commit, return url
-        # these lines currently live in services/url.py inside resolve()
-        ...
+    def increment_clicks(self, url_obj: URL) -> URL:
+        current_clicks = url_obj.clicks
+        if current_clicks is None:
+            url_obj.clicks = 1
+        else:
+            url_obj.clicks += 1
+        self.db.commit()
+        return url_obj
