@@ -17,6 +17,16 @@ def get_db():
     finally:
         db.close()
 
+def get_user_repository(db: Session = Depends(get_db)) -> IUserRepository:
+    # Takes: db session from get_db
+    # Does: constructs SQLAlchemyUserRepository with that session
+    # Returns: IUserRepository
+
+def get_url_repository(db: Session = Depends(get_db)) -> IURLRepository:
+    # Takes: db session from get_db
+    # Does: constructs SQLAlchemyURLRepository with that session
+    # Returns: IURLRepository
+
 def get_current_user(
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db)
