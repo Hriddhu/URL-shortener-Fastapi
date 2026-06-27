@@ -6,6 +6,7 @@ from fastapi import HTTPException, status
 from passlib.context import CryptContext
 from jose import JWTError, jwt
 from models import User
+from repositories.base import IUserRepository, IURLRepository
 
 JWT_SECRET = os.getenv("JWT_SECRET", "changemeinproduction")
 ALGORITHM = "HS256"
@@ -36,18 +37,14 @@ def decode_token(token: str) -> int:
     except JWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token")
 
-def create_user(db: Session, email: str, password: str) -> User:
-    existing = db.query(User).filter(User.email == email).first()
+def create_user(user_repo: IUserRepository, email: str, password: str) -> User:
+    existing = user_repo.get_by_email(email)
     if existing:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already registered")
-    user = User(email=email, hashed_pwd=hash_password(password))
-    db.add(user)
-    db.commit()
-    db.refresh(user)
-    return user
+    return user_repo.create(email= email, hashed_pwd= hash_password(password))
 
-def authenticate_user(db: Session, email: str, password: str) -> User:
-    user = db.query(User).filter(User.email == email).first()
+def authenticate_user(user_repo:IUserRepository, email: str, password: str) -> User:
+    user = user_repo.get_by_email(email)
     if not user or not verify_password(password, str(user.hashed_pwd)):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
     return user
