@@ -1,12 +1,11 @@
 import os
 from datetime import datetime, timedelta
 from typing import Optional
-from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from passlib.context import CryptContext
 from jose import JWTError, jwt
 from models import User
-from repositories.base import IUserRepository, IURLRepository
+from repositories.base import IUserRepository
 
 JWT_SECRET = os.getenv("JWT_SECRET", "changemeinproduction")
 ALGORITHM = "HS256"

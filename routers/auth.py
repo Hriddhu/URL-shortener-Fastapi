@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from schemas.user import RegisterRequest, LoginRequest, UserResponse, TokenResponse
 from services.auth import create_user, authenticate_user, create_token
-from deps import get_db, get_user_repository
+from deps import get_user_repository
 from repositories.base import IUserRepository
 
 

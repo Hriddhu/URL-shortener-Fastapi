@@ -2,7 +2,7 @@ import os
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from fastapi import HTTPException, status
-from typing import Optional
+from typing import Optional, cast
 from repositories.base import IURLRepository
 
 load_dotenv()
@@ -66,7 +66,7 @@ def resolve(url_repo:IURLRepository, slug: str):
     if not is_active:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Link is deactivated")
     
-    expires_at = Optional[datetime], url_obj.expires_at
+    expires_at = url_obj.expires_at
     if expires_at is not None and expires_at < datetime.utcnow():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Link expired")
     
